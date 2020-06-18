@@ -1,4 +1,5 @@
 const passport = require("passport");
+const listEndPoints = require("express-list-endpoints");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const express = require("express");
@@ -6,7 +7,7 @@ const cors = require("cors");
 const auth = require("./src/utils/auth");
 const app = express();
 
-const userService = require("./src/Model/User");
+const userService = require("./src/routes/user");
 
 dotenv.config();
 
@@ -34,3 +35,5 @@ const port = process.env.PORT || 9120;
 app.listen(port, () => {
   console.log(`Your app is launched on port ${port}`);
 });
+
+console.log(listEndPoints(app));
