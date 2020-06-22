@@ -10,14 +10,10 @@ userRouter.get("/me", passport.authenticate("jwt"), async (req, res) => {
 });
 
 userRouter.post("/signup", async (req, res) => {
-  try {
-    const newUser = await User.register(req.body, req.body.password);
-    const user = await User.findById(newUser._id);
-    const token = getToken(newUser);
-    res.send({ user, access_token: token });
-  } catch (err) {
-    console.log(err);
-  }
+  const newUser = await User.register(req.body, req.body.password);
+  const user = await User.findById(newUser._id);
+  const token = getToken(newUser);
+  res.send({ user, access_token: token });
 });
 
 userRouter.post("/signin", passport.authenticate("local"), async (req, res) => {

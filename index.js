@@ -6,8 +6,11 @@ const express = require("express");
 const cors = require("cors");
 const auth = require("./src/utils/auth");
 const app = express();
+require("express-async-errors");
 
 const userService = require("./src/routes/user");
+const errorMiddleware = require("./src/utils/expressErrorHandler");
+const logger = require("./src/utils/logger");
 
 dotenv.config();
 
@@ -19,13 +22,14 @@ mongoose.connect(
     useFindAndModify: false,
     useCreateIndex: true,
   },
-  (err) => console.log(err ? err : "MongoDb connected")
+  (err) => (err ? logger.error(err) : logger.info("MongoDB Connected"))
 );
 
 app.use(express.json());
 app.use(cors());
 app.use(passport.initialize());
 app.use("/api/users", userService);
+app.use(errorMiddleware);
 
 app.get("/", (req, res) => {
   res.send("Server running");
@@ -33,7 +37,7 @@ app.get("/", (req, res) => {
 
 const port = process.env.PORT || 9120;
 app.listen(port, () => {
-  console.log(`Your app is launched on port ${port}`);
+  logger.info(`Your app is launched on port ${port}`);
 });
 
 console.log(listEndPoints(app));
