@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+const { diseaseSchema } = require("../Diseases");
+const { medicineSchema } = require("../Medicines");
 const plm = require("passport-local-mongoose");
 
 const userSchema = new mongoose.Schema({
@@ -11,6 +13,8 @@ const userSchema = new mongoose.Schema({
   weight: Number,
   bloodType: String,
   emergencyContacts: String,
+  diseases: [{ type: mongoose.Schema.Types.ObjectId, ref: "disease" }],
+  medicines: [{ type: mongoose.Schema.Types.ObjectId, ref: "medicine" }],
 });
 
 userSchema.plugin(plm);
