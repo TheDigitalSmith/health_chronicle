@@ -3,7 +3,7 @@ const userRouter = express.Router();
 const passport = require("passport");
 
 const { User, userValidator } = require("../../Model/User");
-const { Disease } = require("../../Model/Diseases");
+const { Disease, validateDiseases } = require("../../Model/Diseases");
 const { Medicine } = require("../../Model/Medicines");
 const { getToken } = require("../../utils/auth");
 const validate = require("../../utils/validate");
@@ -46,7 +46,7 @@ userRouter.delete("/", passport.authenticate("jwt"), async (req, res) => {
 
 userRouter.put(
   "/diseases/add",
-  passport.authenticate("jwt"),
+  [passport.authenticate("jwt"), validate(validateDiseases)],
   async (req, res) => {
     const disease = await Disease.findOne({ name: req.body.name });
     if (!disease) {
