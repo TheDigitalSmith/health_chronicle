@@ -4,6 +4,7 @@ const passport = require("passport");
 
 const User = require("../../Model/User");
 const { Disease } = require("../../Model/Diseases");
+const { Medicine } = require("../../Model/Medicines");
 const { getToken } = require("../../utils/auth");
 
 userRouter.get("/me", passport.authenticate("jwt"), async (req, res) => {
@@ -51,30 +52,66 @@ userRouter.put("/diseases", passport.authenticate("jwt"), async (req, res) => {
       },
       { new: true, runValidators: true }
     );
-    console.log(user);
     return res.json(user);
   }
-  const user = await User.findById(req.user._id);
-  user.diseases.push(disease._id);
-  await user.save();
+  const user = await User.findByIdAndUpdate(
+    req.user._id,
+    {
+      $push: {
+        diseases: disease._id,
+      },
+    },
+    { new: true, runValidators: true }
+  );
   res.json(user);
 });
 
-userRouter.delete(
-  "/diseases",
-  passport.authenticate("jwt"),
-  async (req, res) => {
+userRouter.put("/diseases", passport.authenticate("jwt"), async (req, res) => {
+  const user = await User.findByIdAndUpdate(
+    req.user._id,
+    {
+      $pull: {
+        diseases: req.body.diseaseID,
+      },
+    },
+    { new: true, runValidators: true }
+  );
+  if (!user) return res.status(404).json("User/disease not found");
+  res.json(user);
+});
+
+userRouter.put("/medicines", passport.authenticate("jwt"), async (req, res) => {
+  const medicine = await Medicine.findOne({ name: req.body.name });
+  if (!medicine) {
+    const newMedicine = await Medicine.create(req.body);
     const user = await User.findByIdAndUpdate(
       req.user._id,
       {
-        $pull: {
-          diseases: req.body.diseaseID,
-        },
+        $push: { medicines: newMedicine._id },
       },
       { new: true, runValidators: true }
     );
-    res.json(user);
+    return res.json(user);
   }
-);
+  const user = await User.findByIdAndUpdate(
+    req.user._id,
+    {
+      $push: { medicines: medicine._id },
+    },
+    { new: true, runValidators: true }
+  );
+  res.json(user);
+});
 
+userRouter.put("/medicine", passport.authenticate("jwt"), async (req, res) => {
+  const user = await User.findByIdAndUpdate(
+    req.user._id,
+    {
+      $pull: { medicine: req.body.medicineID },
+    },
+    { new: true, runValidators: true }
+  );
+  if (!user) return res.status(404).json("User/disease not found");
+  res.json(user);
+});
 module.exports = userRouter;
