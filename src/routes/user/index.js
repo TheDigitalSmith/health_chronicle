@@ -4,7 +4,7 @@ const passport = require("passport");
 
 const { User, userValidator } = require("../../Model/User");
 const { Disease, validateDiseases } = require("../../Model/Diseases");
-const { Medicine } = require("../../Model/Medicines");
+const { Medicine, validateMedicine } = require("../../Model/Medicines");
 const { getToken } = require("../../utils/auth");
 const validate = require("../../utils/validate");
 
@@ -95,7 +95,7 @@ userRouter.put(
 
 userRouter.put(
   "/medicines/add",
-  passport.authenticate("jwt"),
+  [passport.authenticate("jwt"), validate(validateMedicine)],
   async (req, res) => {
     const medicine = await Medicine.findOne({ name: req.body.name });
     if (!medicine) {

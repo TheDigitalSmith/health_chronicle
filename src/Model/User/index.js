@@ -1,6 +1,4 @@
 const mongoose = require("mongoose");
-const { diseaseSchema } = require("../Diseases");
-const { medicineSchema } = require("../Medicines");
 const Joi = require("@hapi/joi");
 const plm = require("passport-local-mongoose");
 
