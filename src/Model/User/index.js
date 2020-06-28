@@ -26,6 +26,12 @@ const emergencySchema = new mongoose.Schema({
   },
 });
 
+const historySchema = new mongoose.Schema({
+  date: Date,
+  case: String,
+  description: String,
+});
+
 const userSchema = new mongoose.Schema({
   firstName: { type: String, max: 50 },
   lastName: { type: String, max: 50 },
@@ -38,9 +44,14 @@ const userSchema = new mongoose.Schema({
     type: String,
     enum: ["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"],
   },
+  organDonour: {
+    type: Boolean,
+    default: false,
+  },
   emergencyContacts: [emergencySchema],
   diseases: [{ type: mongoose.Schema.Types.ObjectId, ref: "disease" }],
   medicines: [{ type: mongoose.Schema.Types.ObjectId, ref: "medicine" }],
+  history: [historySchema],
 });
 
 userSchema.plugin(plm);

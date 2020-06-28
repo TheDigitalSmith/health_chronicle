@@ -2,7 +2,7 @@ const ExtractJwt = require("passport-jwt").ExtractJwt;
 const JwtStrategy = require("passport-jwt").Strategy;
 const jwt = require("jsonwebtoken");
 const LocalStrategy = require("passport-local").Strategy;
-const User = require("../../Model/User");
+const { User } = require("../../Model/User");
 const passport = require("passport");
 const dotenv = require("dotenv");
 
