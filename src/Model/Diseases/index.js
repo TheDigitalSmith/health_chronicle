@@ -1,11 +1,16 @@
 const mongoose = require("mongoose");
 const Joi = require("@hapi/joi");
 
+const organSchema = new mongoose.Schema({
+  name: String,
+});
+
 const diseaseSchema = new mongoose.Schema({
   name: {
     type: String,
     maxlength: 50,
   },
+  organs: [organSchema],
 });
 
 const Disease = mongoose.model("disease", diseaseSchema);
