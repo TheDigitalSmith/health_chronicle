@@ -51,6 +51,7 @@ const userSchema = new mongoose.Schema({
   emergencyContacts: [emergencySchema],
   diseases: [{ type: mongoose.Schema.Types.ObjectId, ref: "disease" }],
   medicines: [{ type: mongoose.Schema.Types.ObjectId, ref: "medicine" }],
+  vaccines: [{ type: mongoose.Schema.Types.ObjectId, ref: "vaccine" }],
   history: [historySchema],
 });
 
