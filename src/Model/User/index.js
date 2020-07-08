@@ -67,13 +67,23 @@ function userValidator(user) {
     lastName: Joi.string().max(30),
     email: Joi.string().email(),
     dateOfBirth: Joi.date(),
-    sex: Joi.string.valid(...enumSex),
+    sex: Joi.string().valid(...enumSex),
     height: Joi.number().max(500),
     weight: Joi.number().max(500),
-    bloodType: Joi.string.valid(...enumBloodType),
+    bloodType: Joi.string().valid(...enumBloodType),
+    organDonour: Joi.bool(),
+    //Note: re assess if the keys are needed below
+    diseases: Joi.array(),
+    medicines: Joi.array(),
+    vaccines: Joi.array(),
+    history: Joi.array(),
+    emergencyContacts: Joi.array(),
+    // _id: Joi.string(),
+    // username: Joi.string(),
+    // __v: Joi.number(),
   });
 
-  return schema.validate(user);
+  return schema.validate(user, { allowUnknown: true, abortEarly: false });
 }
 
 module.exports = { User, userValidator };
