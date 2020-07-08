@@ -5,6 +5,7 @@ const passport = require("passport");
 const { User, userValidator } = require("../../Model/User");
 const { Disease, validateDiseases } = require("../../Model/Diseases");
 const { Medicine, validateMedicine } = require("../../Model/Medicines");
+const { Vaccine, validateVaccine } = require("../../Model/Vaccines");
 const { getToken } = require("../../utils/auth");
 const validate = require("../../utils/validate");
 
@@ -121,13 +122,52 @@ userRouter.put(
 );
 
 userRouter.put(
-  "/medicine/remove",
+  "/medicines/remove",
   passport.authenticate("jwt"),
   async (req, res) => {
     const user = await User.findByIdAndUpdate(
       req.user._id,
       {
-        $pull: { medicine: req.body.medicineID },
+        $pull: { medicines: req.body.medicineID },
+      },
+      { new: true, runValidators: true }
+    );
+    if (!user) return res.status(404).json("User/disease not found");
+    res.json(user);
+  }
+);
+
+userRouter.put(
+  "/vaccines/add",
+  [passport.authenticate("jwt"), validate(validateVaccine)],
+  async (req, res) => {
+    const vaccine = await Vaccine.findOne({ name: req.body.name });
+    if (!vaccine) {
+      const newVaccine = await Vaccine.create(req.body);
+      const user = await User.findByIdAndUpdate(
+        req.user._id,
+        { $push: { vaccines: newVaccine._id } },
+        { new: true, runValidators: true }
+      );
+      return res.json(user);
+    }
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      { $push: { vaccines: vaccine._id } },
+      { new: true, runValidators: true }
+    );
+    return res.json(user);
+  }
+);
+
+userRouter.put(
+  "/vaccines/remove",
+  [passport.authenticate("jwt"), validate(validateVaccine)],
+  async (req, res) => {
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      {
+        $pull: { vaccines: req.body.vaccineID },
       },
       { new: true, runValidators: true }
     );
